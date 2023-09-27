@@ -6,10 +6,6 @@ import { sendEntityUpdate } from "./client";
 import { nrandom, randomVec } from "./utils";
 import { atom } from "jotai";
 
-export const lockedAtom = atom<Boolean>(true);
-export const claimedStatusAtom = atom<true | false | null>(null);
-export const spaceSettingsOpen = atom<boolean>(false);
-export const accessStatusAtom = atom<"public" | "editor" | "none" | null>(null);
 
 let uuid = uuidv4().slice(0, 8);
 

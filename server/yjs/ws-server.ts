@@ -2,7 +2,6 @@ import WebSocket from "ws";
 import * as https from "https";
 import { setupWSConnection } from "./utils";
 
-// const host = process.env.HOST || "localhost";
 
 function startWsServer(server: https.Server) {
   const wss = new WebSocket.Server({ noServer: true });
@@ -14,6 +13,7 @@ function startWsServer(server: https.Server) {
     // See https://github.com/websockets/ws#client-authentication
 
     const handleAuth = (ws: any) => {
+      console.log("upgrade?", ws);
       wss.emit("connection", ws, request);
     };
     wss.handleUpgrade(request, socket, head, handleAuth);

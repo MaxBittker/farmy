@@ -54,7 +54,7 @@ if (typeof persistenceDir === "string") {
         ldb.storeUpdate(docName, update);
       });
     },
-    writeState: async (docName, ydoc) => {},
+    writeState: async (docName, ydoc) => { },
   };
 }
 
@@ -284,7 +284,7 @@ const send = (doc: WSSharedDoc, conn: any, m: Uint8Array) => {
   try {
     conn.send(
       m,
-      /** @param {any} err */ (err: any) => {
+      /** @param {any} err */(err: any) => {
         err != null && closeConn(doc, conn);
       }
     );
@@ -322,19 +322,20 @@ const setupWSConnection = async (
   req: IncomingMessage,
   { docName = req?.url?.slice(1).split("?")[0], gc = true }: any = {}
 ) => {
+  console.log("setupWSConnection", docName);
   let qi = req.url?.lastIndexOf("?");
   let authToken = null;
-  let writeAccess = false;
+  // let writeAccess = false;
   if (qi) {
     let qs = req.url?.slice(qi + 1);
     authToken = querystring.parse(qs)["authToken"];
-    writeAccess = await checkCode(
-      req.url?.slice("walky-space-".length + 2, qi) || "",
-      authToken
-    );
-    if (writeAccess) {
-      (conn as any)["UNLOCKED"] = true;
-    }
+    // writeAccess = await checkCode(
+    // req.url?.slice("walky-space-".length + 2, qi) || "",
+    // authToken
+    // );
+    // if (writeAccess) {
+    (conn as any)["UNLOCKED"] = true;
+    // }
   }
 
   conn.binaryType = "arraybuffer";
@@ -344,7 +345,7 @@ const setupWSConnection = async (
   // listen and reply to events
   conn.on(
     "message",
-    /** @param {ArrayBuffer} message */ (message: ArrayBuffer) =>
+    /** @param {ArrayBuffer} message */(message: ArrayBuffer) =>
       messageListener(conn, doc, new Uint8Array(message))
   );
 

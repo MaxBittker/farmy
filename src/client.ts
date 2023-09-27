@@ -5,14 +5,7 @@ import { getState } from "./state";
 import { AgentLayout, EntityLayout } from "./types";
 
 import { nrandom, distance } from "./utils";
-// import { v4 as uuidv4 } from "uuid";
 
-export function setEditCode(editCode: string) {
-  localStorage.setItem("code:" + window.location.pathname, editCode);
-}
-export function getEditCode() {
-  return localStorage.getItem("code:" + window.location.pathname);
-}
 
 const ydoc = new Y.Doc();
 const yMapEnts = ydoc.getMap("entities");
@@ -31,10 +24,9 @@ const urlParams = new URLSearchParams(window.location.search);
 const editCode = urlParams.get("code");
 
 const yProvider = new WebsocketProvider(
-  `wss://${window.location.hostname}`,
+  `ws://${window.location.hostname}`,
   roomname,
   ydoc,
-  { params: { authToken: getEditCode() || editCode || "" } }
 );
 
 const awareness = yProvider.awareness;
