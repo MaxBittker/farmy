@@ -1,15 +1,15 @@
-import { Render } from "./src/render";
+import { Render } from "./render";
 import * as React from "react";
-import ReactDOM = require("react-dom");
+import ReactDOM from "react-dom";
 
-import { startUI } from "./src/ui";
+import { startUI } from "./ui";
 import "regenerator-runtime/runtime";
 
-import { startInput } from "./src/input";
-import { updateCamera } from "./src/camera";
-import { updateAgent } from "./src/movement";
-import { sendUpdate } from "./src/client";
-import { getState } from "./src/state";
+import { startInput } from "./input";
+import { updateCamera } from "./camera";
+import { updateAgent } from "./movement";
+import { sendUpdate } from "./client";
+import { getState } from "./state";
 
 startInput();
 startUI();

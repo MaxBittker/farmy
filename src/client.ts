@@ -1,6 +1,8 @@
 import * as Y from "yjs";
-import { WebsocketProvider } from "y-websocket";
+// import { WebsocketProvider } from "y-websocket";
+import YPartyKitProvider from "y-partykit/provider";
 
+// console.log(YPartyKitProvider)
 import { getState } from "./state";
 import { AgentLayout, EntityLayout } from "./types";
 
@@ -23,10 +25,10 @@ const roomname = `walky-space-${window.location.pathname}`;
 const urlParams = new URLSearchParams(window.location.search);
 const editCode = urlParams.get("code");
 
-const yProvider = new WebsocketProvider(
-  `ws://${window.location.hostname}`,
+const yProvider = new YPartyKitProvider(
+  "localhost:1999",
   roomname,
-  ydoc,
+  ydoc
 );
 
 const awareness = yProvider.awareness;
