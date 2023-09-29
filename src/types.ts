@@ -1,21 +1,5 @@
 import * as Vector from "@graph-ts/vector2";
 
-enum EntityType {
-  Image = "img",
-  Text = "text",
-}
-
-interface EntityLayout {
-  uuid: string;
-  value: string;
-  type: EntityType;
-  pos: Matter.Vector;
-  size: Matter.Vector;
-  rotation: number;
-  scale: number;
-  iid: number;
-}
-
 interface AgentLayout {
   uuid: string;
   pos: Matter.Vector;
@@ -32,9 +16,8 @@ interface StateLayout {
   camera: Matter.Vector;
   frame: Matter.Vector;
   center: Matter.Vector;
-  entities: EntityLayout[];
   // audios: Source[];
   agents: AgentLayout[];
 }
 
-export { StateLayout, EntityLayout, AgentLayout, EntityType };
+export { StateLayout, AgentLayout };

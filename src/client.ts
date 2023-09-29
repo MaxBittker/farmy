@@ -4,26 +4,16 @@ import YPartyKitProvider from "y-partykit/provider";
 
 // console.log(YPartyKitProvider)
 import { getState } from "./state";
-import { AgentLayout, EntityLayout } from "./types";
+import { AgentLayout } from "./types";
 
-import { nrandom, distance } from "./utils";
+import { distance } from "./utils";
 
 
 const ydoc = new Y.Doc();
-const yMapEnts = ydoc.getMap("entities");
-// observers are called after each transaction
-yMapEnts.observe((event) => {
-  let data = Object.values(ydoc.toJSON().entities);
-  let state = getState();
 
-  state.entities = data as EntityLayout[];
-  state.entities = state.entities.sort((a, b) => a.iid - b.iid);
-});
 
 const roomname = `walky-space-${window.location.pathname}`;
 
-const urlParams = new URLSearchParams(window.location.search);
-const editCode = urlParams.get("code");
 
 const yProvider = new YPartyKitProvider(
   "localhost:1999",
@@ -73,21 +63,5 @@ function sendUpdate() {
   }
 }
 
-function sendEntityUpdate(i_uuid: string) {
-  const { entities } = getState();
 
-  let ent = entities.find(({ uuid }) => uuid === i_uuid);
-  if (!ent) {
-    console.log("bad entity update: " + i_uuid);
-    return;
-  }
-
-  yMapEnts.set(i_uuid, ent);
-}
-
-function sendEntityDelete(uuid: string) {
-  console.log("deleting: " + uuid);
-  yMapEnts.delete(uuid);
-}
-
-export { sendUpdate, sendEntityDelete, sendEntityUpdate };
+export { sendUpdate };

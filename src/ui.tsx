@@ -1,5 +1,6 @@
-import * as ReactDOM from "react-dom";
 import * as React from "react";
+import { createRoot } from "react-dom/client";
+
 import "./tools.css";
 import { BrowserRouter as Router } from "react-router-dom";
 
@@ -33,11 +34,12 @@ function UI({}) {
 function startUI() {
   console.log("starting");
 
-  ReactDOM.render(
+  let rootElement = document.getElementById("ui");
+  let root = createRoot(rootElement!); // createRoot(container!) if you use TypeScript
+  root.render(
     <Router>
       <UI />
-    </Router>,
-    document.getElementById("ui")
+    </Router>
   );
 }
 

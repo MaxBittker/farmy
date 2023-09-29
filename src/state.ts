@@ -1,8 +1,7 @@
 import * as Vector from "@graph-ts/vector2";
 
 import { v4 as uuidv4 } from "uuid";
-import { EntityLayout, StateLayout } from "./types";
-import { sendEntityUpdate } from "./client";
+import { StateLayout } from "./types";
 import { nrandom, randomVec } from "./utils";
 import { atom } from "jotai";
 
@@ -22,12 +21,10 @@ let state: StateLayout = {
   camera: { x: 0, y: 0 },
   frame: { x: 0, y: 0 },
   center: { x: 0, y: 0 },
-  entities: [],
   // audios: [],
   agents: [],
 };
 
-state.entities = [];
 
 function resize() {
   state.frame = { x: window.innerWidth, y: window.innerHeight };
@@ -42,23 +39,4 @@ function getState() {
   return state;
 }
 
-function getEntity(uuid: string) {
-  // set the element's new position:
-  const { entities } = getState();
-
-  let i = entities.findIndex(({ uuid: u }) => {
-    return u === uuid;
-  });
-  return entities[i];
-}
-function writeEntity(uuid: string, v: EntityLayout) {
-  // set the element's new position:
-  const { entities } = getState();
-
-  let i = entities.findIndex(({ uuid: u }) => {
-    return u === uuid;
-  });
-  entities[i] = v;
-  sendEntityUpdate(uuid);
-}
-export { getState, getEntity, writeEntity };
+export { getState };

@@ -9,7 +9,6 @@ import shadow from "./../assets/arch-shadow.png";
 // import flower from "./../assets/flower.png";
 // import bubble from "./../assets/bubble.png";
 import * as Vector from "@graph-ts/vector2";
-import Entity from "./Entity";
 import { getState } from "./state";
 import { AgentLayout } from "./types";
 import { convertTarget } from "./input";
@@ -82,7 +81,7 @@ function renderAgent(agent: AgentLayout, i: number) {
   );
 }
 function Render({ tick }): JSX.Element {
-  const { camera, entities, agents, center } = getState();
+  const { camera, agents, center } = getState();
   const [count, setCount] = React.useState(0);
 
   useAnimationFrame((deltaTime: number) => {
@@ -119,40 +118,6 @@ function Render({ tick }): JSX.Element {
           transform: `translate(-50%,-50% ) translate(${cameraPos.x}px,${cameraPos.y}px ) `,
         }}
       />
-
-      <div
-        id="entities"
-        style={{ transform: `translate(${cameraPos.x}px,${cameraPos.y}px ) ` }}
-      >
-        {/* <div id="info">
-          <h2 style={{ marginBottom: ".5em" }}>Welcome! </h2>
-          <p>Walky.space is under construction. </p>
-     
-          <p>You're invited to share, organize, and prune.</p>
-
-          <p>Tap + hold to select. &nbsp; Be kind, please ☺</p>
-          <p style={{ float: "right" }}>- Max </p>
-        </div> */}
-
-        {entities.map(
-          ({ value, type, pos, size, rotation, scale, uuid }, i) => {
-            // let relPos = Vector.add(Vector.subtract(pos, camera), center);
-            return (
-              <Entity
-                key={uuid}
-                value={value}
-                type={type}
-                pos={pos}
-                size={size}
-                rotation={rotation}
-                scale={scale}
-                uuid={uuid}
-                i={i}
-              ></Entity>
-            );
-          }
-        )}
-      </div>
     </React.Fragment>
   );
 }

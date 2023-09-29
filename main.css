@@ -16,15 +16,27 @@ body {
   height: -webkit-fill-available;
   height: fill-available;
 }
+
+canvas {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
 textarea {
   font-family: "Libre Franklin", sans-serif;
 
 }
+
 * {
-  -webkit-user-select: none; /* Safari */
+  -webkit-user-select: none;
+  /* Safari */
   user-select: none !important;
   touch-action: manipulation;
 }
+
 #window {
   overscroll-behavior-y: none;
   overscroll-behavior-x: none;
@@ -40,6 +52,7 @@ textarea {
   height: fill-available;
   /* background-color: bisque;  */
 }
+
 @media screen and (max-width: 600px) {
   #window {
     zoom: 0.6;
@@ -99,6 +112,7 @@ img {
 .deleting img {
   pointer-events: all;
 }
+
 .deleting {
   z-index: 1;
 
@@ -113,6 +127,7 @@ img {
 .moving img {
   pointer-events: all;
 }
+
 .moving {
   z-index: 1;
 
@@ -132,6 +147,7 @@ img {
   filter: contrast(120%);
   mix-blend-mode: normal;
 }
+
 .speech {
   font-size: 50px;
   position: absolute;
@@ -139,6 +155,7 @@ img {
   transform: translate(-50%, -130px);
   /* filter: drop-shadow(0px 0px 2px #fff); */
 }
+
 .bubble {
   width: 120px;
   height: 120px;
@@ -150,7 +167,7 @@ img {
   mix-blend-mode: normal;
 }
 
-#spawner{
+#spawner {
   position: absolute;
   z-index: 10006;
   top: -50px;
@@ -161,15 +178,19 @@ img {
   /* opacity: 0.5; */
   /* border: 2px dashed rgba(100, 100, 100, 0.561) ; */
 }
-#spawner.shadow{
+
+#spawner.shadow {
   z-index: 10;
 }
 
-.rotate{
-  animation: rotate 10s linear infinite; 
+.rotate {
+  animation: rotate 10s linear infinite;
 }
-@keyframes rotate{
-  to{ transform: rotate(360deg); }
+
+@keyframes rotate {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 #close {
