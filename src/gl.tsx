@@ -5,15 +5,47 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 const glsl = SwissGL(canvas);
+const glslify = (x: any) => x[0];
+const FP = glslify`
+vec2 cam = vec2(camera.x, -camera.y);
+float aspect = resolution.x / resolution.y;
+if(aspect < 1.0){
+    cam.x *= aspect;
+} else {
+    cam.y /= aspect;
 
-function render(camera: Vector2, data: Float32Array) {
+};
+
+vec2 dataRegionSize = vec2(dataSize * tileSize);
+vec2 offset = (dataRegionSize - resolution);
+vec2 uv = UV + ((cam) /resolution) ;
+uv -= .5;
+//pseudorandom value:
+float rand = fract(sin(dot(floor(uv * resolution)/resolution, vec2(12.9898,78.233))) * 43758.5453);
+uv.x += rand * 0.005;
+uv.y += rand * 0.005;
+
+vec2 tileCount = resolution / tileSize;
+// vec2 uvStep = mod(uv  * tileCount.x, 1.0);
+vec2 gridPos = floor(uv * tileCount.x);
+
+float screenDataRatio =resolution.x / ( (dataSize)* tileSize);
+
+// gridPos += vec2(tileSize/resolution);
+ivec2 gridPosI = ivec2(gridPos.x, dataSize-gridPos.y);
+gridPosI.x += int(dataSize/2.);
+gridPosI.y -= int(dataSize/2.);
+float grayValue = data(gridPosI).r;
+FOut = vec4(vec3(1.0 - grayValue),0.5);
+`;
+
+function render(camera: Vector2, tileSize: number, data: Float32Array) {
+  let dataSize = Math.sqrt(data.length);
+  //   console.log(dataSize);
   let dataGL = glsl(
     {},
     {
-      size: [
-        Math.round(Math.sqrt(data.length)),
-        Math.round(Math.sqrt(data.length)),
-      ],
+      size: [dataSize, dataSize],
       format: "r32f",
       data: data,
       tag: "grid",
@@ -21,33 +53,16 @@ function render(camera: Vector2, data: Float32Array) {
       wrap: "repeat",
     }
   );
+  //   glsl({ F: dataGL, FP: `F(I/20).x*3.0` });
+
   glsl({
     data: dataGL,
     camera: [camera.x, camera.y],
     resolution: [canvas.width, canvas.height],
+    tileSize,
+    dataSize,
     // Fragment shader returns 'RGBA'
-    FP: `
-    vec2 cam = vec2(camera.x, -camera.y);
-    float aspect = resolution.x / resolution.y;
-    if(aspect < 1.0){
-        cam.x *= aspect;
-    } else {
-        cam.y /= aspect;
-
-    };
-    vec2 uv = UV + ((cam) /resolution) ;
-    //pseudorandom value:
-    float rand = fract(sin(dot(uv, vec2(12.9898,78.233))) * 43758.5453);
-    uv.x += rand * 0.001;
-    uv.y += rand * 0.001;
-    vec2 tileCount = resolution / 35.0;
-    vec2 uvStep = mod(uv  * tileCount.x, 1.0);
-    vec2 gridPos = floor(uv * tileCount.x);
-
-    float screenDataRatio =( 2000.0* 35.0) / resolution.x;
-    float grayValue = data(gridPos / screenDataRatio).r;
-    FOut = vec4(.5, grayValue*10.,0.5,0.5);
-    `,
+    FP,
     Aspect: "cover",
     //   Blend: "d*(1-sa)+s*sa",
   });

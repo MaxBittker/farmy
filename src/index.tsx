@@ -25,15 +25,12 @@ root.render(
   </React.StrictMode>
 );
 
-// // let debug = document.getElementById("debug");
+let size = 1000;
 
-// ctx.imageSmoothingEnabled = false;
-
-let gridData = new Array(2000)
-  .fill(0)
-  .map(() => new Array(2000).fill(0).map(() => Math.random() * 0.1));
-
-let data = Float32Array.from(gridData.flat());
+let data = new Float32Array(size * size).map((_, i) => {
+  // if (i % 4 == 0) return 0;
+  return i / (size * size * 2) + 0.1 * Math.random();
+});
 
 let lasttick = Date.now();
 function tick() {
@@ -44,6 +41,19 @@ function tick() {
   let millisPerTick = 1000 / 60;
   let elapsedTicks = elapsedMillis / millisPerTick;
 
+  const cellSize = 10;
+  let pos = me.pos;
+  let cX = Math.floor(pos.x / cellSize);
+  let cY = Math.floor(pos.y / cellSize);
+  cX = Math.floor(cX + size / 2);
+  cY = Math.floor(cY + size / 2);
+  // console.log(cX, cY);
+  let index = cX + cY * size;
+
+  index = (index + data.length) % data.length;
+  data[index] = 1.0;
+
+  // data = data.map((x) => x * 0.999);
   state.me = updateAgent(me, elapsedTicks);
   state.agents = agents.map((agent) => updateAgent(agent, elapsedTicks));
 
@@ -53,7 +63,7 @@ function tick() {
     sendUpdate();
   }
   // renderGrid(state.camera);
-  render(state.camera, data);
+  render(state.camera, cellSize, data);
   i++;
 
   lasttick = Date.now();
