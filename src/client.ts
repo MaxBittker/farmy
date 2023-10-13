@@ -11,9 +11,19 @@ import { distance } from "./utils";
 
 const ydoc = new Y.Doc();
 
+const bitmap = ydoc.getMap("bitmap");
 
+bitmap.observe((event) => {
+  // console.log(event)
+  event.keysChanged.forEach((key) => {
+    window.data[key] = 1
+  })
+});
 const roomname = `walky-space-${window.location.pathname}`;
+function sendBitmapUpdate(i: number, val: number) {
 
+  bitmap.set(i.toString(), val);
+}
 
 const yProvider = new YPartyKitProvider(
   "localhost:1999",
@@ -64,4 +74,4 @@ function sendUpdate() {
 }
 
 
-export { sendUpdate };
+export { sendUpdate, sendBitmapUpdate };

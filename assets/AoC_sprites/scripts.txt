@@ -1,0 +1,17 @@
+The following ImageMagick commands were devised to convert black / #ff00ff (pink) backgrounds to transparency, and bmp to png. In the case of black backgrounds, there are some artifacts due to black shadows being replaced with transparency when they border the image. I have re-added the black pixels manually in some cases, but it is very difficult to not mess up the image.
+
+When trying to replicate these, take note of the differences between linux and windows command line escaping (i.e. which characters require a backslash preceding them) as described on the ImageMagick website.
+
+This command fills all black pixels connected to an edge of the image to transparency, and saves as a png with transparency layer.
+mogrify -bordercolor black -border 1x1 -alpha set -channel RGBA -fill non -floodfill +0+0 black -shave 1x1 -format png *.bmp
+
+For the pink-backgrounded buildings, I used this to remove the pink and also get clean edges using fuzz
+mogrify -transparent #ff00ff -fuzz 35% -format png *.bmp
+
+For the units, I switched to Linux and used
+find -name "*.bmp" -exec mogrify -transparent #ff00ff -format png {} + -exec rm {} +
+
+To replace all pink backgrounded image files recursively with pngs
+Only the berserk has a black background, so it needed the following command. All of the berserk images have a black shadow which has been ruined by converting to transparency - I see no way to fix this.
+
+find -name "*.bmp" -exec mogrify -bordercolor black -border 1x1 -alpha set -channel RGBA -fill none -floodfill \+0\+0 black -shave 1x1 -format png  {} +

@@ -4,7 +4,7 @@ interface AgentLayout {
   uuid: string;
   pos: Matter.Vector;
   target: Matter.Vector;
-  facing: Boolean;
+  heading: number;
   animation: "move" | "stand" | "sit";
   timeIdle: number;
   color?: number;

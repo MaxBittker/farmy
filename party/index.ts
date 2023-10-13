@@ -7,6 +7,7 @@ export default {
       // experimental: persists the document to partykit's room storage
       persist: true,
     });
+
   },
 };
 

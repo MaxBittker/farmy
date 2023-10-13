@@ -34,7 +34,7 @@ function renderAgent(agent: AgentLayout, i: number) {
   if (agent.uuid == me.uuid) {
     agent = me;
   }
-  let { pos, animation, facing, color, word } = agent;
+  let { pos, animation, heading, color, word } = agent;
 
   let newsrc = animations[animation] || walk;
   let relPos = Vector.add(Vector.subtract(pos, camera), center);
@@ -65,7 +65,7 @@ function renderAgent(agent: AgentLayout, i: number) {
       >
         {word}
       </h1>
-      <img
+      {/* <img
         id="walker"
         src={newsrc}
         key={agent.uuid}
@@ -76,7 +76,7 @@ function renderAgent(agent: AgentLayout, i: number) {
           transform: `translate(-50%, -75%) scaleX(${facing ? -1 : 1})`,
           zIndex: Math.floor(10000 + pos.y),
         }}
-      ></img>
+      ></img> */}
     </React.Fragment>
   );
 }
@@ -102,7 +102,7 @@ function Render({ tick }): JSX.Element {
         }}
       ></div> */}
       {agents.map(renderAgent)}
-      <img
+      {/* <img
         id="spawner"
         className=""
         src={spiral}
@@ -117,7 +117,7 @@ function Render({ tick }): JSX.Element {
         style={{
           transform: `translate(-50%,-50% ) translate(${cameraPos.x}px,${cameraPos.y}px ) `,
         }}
-      />
+      /> */}
     </React.Fragment>
   );
 }

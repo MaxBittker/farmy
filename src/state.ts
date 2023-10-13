@@ -13,7 +13,7 @@ let state: StateLayout = {
     uuid,
     pos: randomVec(50),
     target: randomVec(50),
-    facing: true,
+    heading: 0,
     animation: "stand",
     timeIdle: 0,
     color: Math.random() * 360,

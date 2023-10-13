@@ -36,7 +36,8 @@ ivec2 gridPosI = ivec2(gridPos.x, dataSize-gridPos.y);
 gridPosI.x += int(dataSize/2.);
 gridPosI.y -= int(dataSize/2.);
 float grayValue = data(gridPosI).r;
-FOut = vec4(vec3(1.0 - grayValue),0.5);
+vec3 green = vec3(170./255.,209./255.,120./255.);
+FOut = vec4(vec3(green *  (1.0- grayValue)),0.5);
 `;
 
 function render(camera: Vector2, tileSize: number, data: Float32Array) {

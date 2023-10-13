@@ -18,11 +18,14 @@ function updateAgent(agent: AgentLayout, elapsed: number) {
 
   agent.pos = Vector.add(pos, velocity);
   // this might not be consistent
-  if (velocity.x < -0.1) {
-    agent.facing = true;
-  }
-  if (velocity.x > 0.1) {
-    agent.facing = false;
+
+  let angle = Vector.angle(heading);
+  angle = Math.round((8 * angle) / (Math.PI * 2));
+  angle = (angle + 8 - 2) % 8;
+
+
+  if (speed > 0.1) {
+    agent.heading = angle;
   }
 
   agent.animation = "stand";
