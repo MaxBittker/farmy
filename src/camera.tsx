@@ -4,10 +4,10 @@ import { getState } from "./state";
 import { topSpeed } from "./movement";
 
 // the 0 is weird.
-let zoom = window.innerWidth <= 600 ? 0.6 : 0.0;
-
+// let zoom = window.innerWidth <= 600 ? 0.6 : 0.0;
+let zoom = 0.0;
 window.addEventListener("resize", () => {
-  zoom = window.innerWidth <= 600 ? 0.6 : 0.0;
+  // zoom = window.innerWidth <= 600 ? 0.6 : 0.0;
 });
 
 function updateCamera(elapsedTicks: number) {

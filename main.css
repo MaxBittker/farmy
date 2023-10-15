@@ -1,6 +1,18 @@
+@font-face {
+  font-family: "NeueBit";
+  src: url("./assets/PPNeueBit-Regular.otf") format("truetype");
+  font-weight: 100;
+}
+
+@font-face {
+  font-family: "Runescape";
+  src: url("./assets/runescape_uf.otf") format("truetype");
+  font-weight: 100;
+}
+
+
 html,
 body {
-  font-family: "Libre Franklin", sans-serif;
 
   width: 100vw;
   height: 100vh;
@@ -15,6 +27,17 @@ body {
   height: 100vh;
   height: -webkit-fill-available;
   height: fill-available;
+
+  /* font-family: "Libre Franklin", sans-serif; */
+
+  font-family: "NeueBit", sans-serif;
+  /* font-family: "Runescape", sans-serif; */
+  font-smooth: antialiased;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-smooth: never;
+  -webkit-font-smoothing: none;
+
 }
 
 canvas {
@@ -51,7 +74,6 @@ textarea {
   height: 100vh;
   height: -webkit-fill-available;
   height: fill-available;
-  /* background-color: bisque;  */
 }
 
 @media screen and (max-width: 600px) {
@@ -100,14 +122,9 @@ textarea {
 }
 
 img {
-  /* position: absolute; */
   z-index: 1;
-  /* mix-blend-mode: difference; */
-  /* mix-blend-mode: exclusion; */
   pointer-events: none;
   user-select: none;
-  /* transition: transform 0.05s; */
-  /* transform: translate(-50%, -50%); */
 }
 
 .deleting img {
@@ -150,11 +167,16 @@ img {
 }
 
 .speech {
-  font-size: 50px;
+  font-size: 35px;
   position: absolute;
   z-index: 10;
-  transform: translate(-50%, -130px);
-  /* filter: drop-shadow(0px 0px 2px #fff); */
+  transform: translate(-50%, -180%);
+  /* filter: drop-shadow(0px 0px 1px #fff); */
+  /* text-shadow: #fff; */
+  color: yellow;
+  font-weight: 100;
+  letter-spacing: 3px;
+  ;
 }
 
 .bubble {

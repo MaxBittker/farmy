@@ -7,6 +7,10 @@ canvas.height = window.innerHeight;
 const glsl = SwissGL(canvas);
 const glslify = (x: any) => x[0];
 const FP = glslify`
+
+#define H 2.0 
+
+
 vec2 cam = vec2(camera.x, -camera.y);
 float aspect = resolution.x / resolution.y;
 if(aspect < 1.0){
@@ -20,14 +24,18 @@ vec2 dataRegionSize = vec2(dataSize * tileSize);
 vec2 offset = (dataRegionSize - resolution);
 vec2 uv = UV + ((cam) /resolution) ;
 uv -= .5;
-//pseudorandom value:
+
+
+
+vec2 uIso =  uv * mat2(1./H,-1.,1./H,1.); // isometric coordinates
+
 float rand = fract(sin(dot(floor(uv * resolution)/resolution, vec2(12.9898,78.233))) * 43758.5453);
-uv.x += rand * 0.005;
-uv.y += rand * 0.005;
+uIso.x += rand * 0.005;
+uIso.y += rand * 0.005;
 
 vec2 tileCount = resolution / tileSize;
 // vec2 uvStep = mod(uv  * tileCount.x, 1.0);
-vec2 gridPos = floor(uv * tileCount.x);
+vec2 gridPos = floor(uIso * tileCount.x );
 
 float screenDataRatio =resolution.x / ( (dataSize)* tileSize);
 

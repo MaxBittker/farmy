@@ -2,9 +2,10 @@ import { getState } from "./state";
 import * as Vector from "@graph-ts/vector2";
 // import { start_audio } from "./audio";
 
-window.zoom = window.innerWidth <= 600 ? 0.6 : 1.0;
+// window.zoom = window.innerWidth <= 600 ? 0.6 : 1.0;
+window.zoom = 1.0
 window.addEventListener("resize", () => {
-  window.zoom = window.innerWidth <= 600 ? 0.6 : 1.0;
+  // window.zoom = window.innerWidth <= 600 ? 0.6 : 1.0;
 });
 
 function convertTarget(t: Matter.Vector) {
@@ -96,7 +97,7 @@ function startInput() {
     let state = getState();
     let keyTarget = Vector.add(
       state.me.pos,
-      Vector.multiplyScalar(velocity,.5 )
+      Vector.multiplyScalar(velocity, .5)
     );
     state.me.target = keyTarget;
   });

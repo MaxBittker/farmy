@@ -23,7 +23,8 @@ const gallery = Object.values(
 
 let allFrames = Object.values(
   import.meta.glob(
-    "@assets/AoC_sprites/Animals/*/*/*.{png,jpg,jpeg,PNG,JPEG}",
+    // "@assets/AoC_sprites/Animals/*/*/*.{png,jpg,jpeg,PNG,JPEG}",
+    "@assets/AoC_sprites/Animals/Standard/*/*.{png,jpg,jpeg,PNG,JPEG}",
     {
       eager: true,
       as: "url",
@@ -58,25 +59,7 @@ allFrames.forEach((src) => {
   units[unit][mode].push(img);
 });
 console.log(units);
-const horseFrames = Object.values(
-  import.meta.glob(
-    "@assets/AoC_sprites/Units/Horse/Walk/*.{png,jpg,jpeg,PNG,JPEG}",
-    {
-      eager: true,
-      as: "url",
-    }
-  )
-).map((src) => {
-  let img = new Image();
-  img.src = src;
-  img.onload = function () {
-    let { width, height } = this;
-    img.width = width;
-    img.height = height;
-  };
 
-  return img;
-});
 // console.log(horseFrames);
 let images = [];
 
@@ -91,13 +74,7 @@ gallery.forEach((src) => {
     // if (src.toLowerCase().indexOf("tree") > -1) {
     newObj.width = width;
     newObj.height = height;
-    // images.push({ img, src, width, height });
-    // }
-    // }
   };
-  // document.body.appendChild(img);
-
-  // return img;
 });
 
 // console.log(gallery);
@@ -158,7 +135,16 @@ function renderGrid(camera: Vector.Vector2, agent: AgentLayout) {
     if (y >= unitY) {
       // console.log(j * squareSize, unitY);
       drawUnit();
-      unitY = 10000000;
+      unitY = Infinity;
+    }
+    //check if sprite is on screen:
+    if (
+      x > canvas.width ||
+      y > canvas.height ||
+      x + entity.image.width < 0 ||
+      y + entity.image.height < 0
+    ) {
+      return;
     }
 
     ctx.drawImage(
@@ -169,39 +155,17 @@ function renderGrid(camera: Vector.Vector2, agent: AgentLayout) {
       entity.image.height
     );
   });
-  // for (let j = startY; j < endY; j++) {
-  //   // for (let j = endY; j > startY; j--) {
-  //   if ((j + 1) * squareSize >= unitY) {
-  //     // console.log(j * squareSize, unitY);
-  //     drawUnit();
-  //     unitY = 1000000;
-  //   }
-  //   for (let i = startX; i < endX; i++) {
-  //     let index = images.length * 50 + i + j * Math.floor(endX - startX);
-  //     const x = i * squareSize - cameraX;
-  //     const y = j * squareSize - cameraY;
-  //     let iData = images[index % images.length];
-  //     if (iData) {
-  //       let { img, width, height } = iData;
-  //       ctx.drawImage(img, x, y);
-  //     }
-  //     // ctx.strokeRect(x, y, squareSize, squareSize);
-  //     ctx.fillStyle = "#000"; // change fill style back for text
-  //     // let ascii = String.fromCharCode(Math.floor(grayValue * 255));
-  //     // ctx.fillText(ascii, x + 8, y + fontSize);
-  //   }
-  // }
-  // mePos.
 
-  // console.log(mePos);
-  // drawUnit();
+  if (unitY < Infinity) {
+    drawUnit();
+  }
 
   function drawUnit() {
     let animals = Object.values(units);
     frame++;
     let { pos, heading, animation } = agent;
 
-    [animals[5]].forEach((animal, i) => {
+    animals.forEach((animal, i) => {
       // console.log(animal);
       let angle = heading;
       let flip = angle > 4;
@@ -221,7 +185,7 @@ function renderGrid(camera: Vector.Vector2, agent: AgentLayout) {
       frames = frames.slice(offset, offset + framePerDir);
 
       // console.log(standFrames.length);
-      let horseImg = frames[frame % frames.length];
+      let horseImg = frames[(frame >> 2) % frames.length];
       // console.lo;
       if (horseImg) {
         let x = pos.x - cameraX;
@@ -267,13 +231,27 @@ function tick() {
   let millisPerTick = 1000 / 60;
   let elapsedTicks = elapsedMillis / millisPerTick;
 
-  const cellSize = 10;
+  const cellSize = 30;
   let pos = me.pos;
-  let cX = Math.floor(pos.x / cellSize);
-  let cY = Math.floor(pos.y / cellSize);
-  cX = Math.floor(cX + size / 2);
-  cY = Math.floor(cY + size / 2);
-  // console.log(cX, cY);
+
+  const H = 2.0; // This is the same value as defined in your shader code
+  const aspect = canvas.width / canvas.height;
+  const cam = [
+    state.camera.x * (aspect < 1.0 ? aspect : 1),
+    -state.camera.y / (aspect >= 1.0 ? aspect : 1),
+  ];
+
+  const uv = [
+    pos.x + cam[0] / canvas.width - 0.5,
+    pos.y + cam[1] / canvas.height - 0.5,
+  ];
+
+  const uIso = [uv[0] / H - uv[1], uv[0] / H + uv[1]];
+  const transformedUIso = [uIso[1], -uIso[0]];
+
+  let cX = Math.round(transformedUIso[0] / cellSize + size / 2);
+  let cY = Math.round(transformedUIso[1] / cellSize + size / 2);
+
   let index = cX + cY * size;
 
   index = (index + data.length) % data.length;
