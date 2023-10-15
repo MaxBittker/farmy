@@ -25,6 +25,9 @@ function sendBitmapUpdate(i: number, val: number) {
   bitmap.set(i.toString(), val);
 }
 
+const yMapEnts = ydoc.getMap("entities");
+
+
 const yProvider = new YPartyKitProvider(
   "localhost:1999",
   roomname,

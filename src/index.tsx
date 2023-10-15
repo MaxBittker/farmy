@@ -101,117 +101,122 @@ canvas.height = window.innerHeight;
 
 let frame = 0;
 
-let entities = [];
-for (var m = 0; m < 100; m++) {
+let entities: EntLayout[] = [];
+
+interface EntLayout {
+  pos: Matter.Vector;
+  image: {
+    img: HTMLImageElement;
+    width?: number;
+    height?: number;
+  };
+}
+
+for (var m = 0; m < 1000; m++) {
   let randomNatural = images[Math.floor(Math.random() * images.length)];
   let ent = {
-    x: (Math.random() - 0.5) * window.innerWidth,
-    y: (Math.random() - 0.5) * window.innerHeight,
+    pos: {
+      x: (Math.random() - 0.5) * window.innerWidth * 3,
+      y: (Math.random() - 0.5) * window.innerHeight * 3,
+    },
     image: randomNatural,
   };
   entities.push(ent);
 }
 entities.sort((a, b) => a.y - b.y);
-function renderGrid(camera: Vector.Vector2, agent: AgentLayout) {
-  const squareSize = 100;
-  // Calculate the adjusted camera coordinates
+
+function DrawEntity(entity) {
+  let camera = getState().camera;
+  const cameraX = camera.x - canvas.width / 2;
+  const cameraY = camera.y - canvas.height / 2;
+  let w = entity.image.width;
+  let h = entity.image.height;
+
+  const x = entity.pos.x - cameraX;
+  const y = entity.pos.y - cameraY;
+
+  //check if sprite is on screen:
+  if (
+    x - w / 2 > canvas.width ||
+    y - h > canvas.height ||
+    x + entity.image.width < 0 ||
+    y + entity.image.height < 0
+  ) {
+    return;
+  }
+
+  ctx.drawImage(entity.image.img, x - w / 2, y - h);
+
+  ctx.fillStyle = "red";
+  ctx.fillRect(x, y, 2, 2);
+}
+function drawUnit(agent: AgentLayout) {
+  let camera = getState().camera;
   const cameraX = camera.x - canvas.width / 2;
   const cameraY = camera.y - canvas.height / 2;
 
-  // Calculate region to be drawn
-  const startX = Math.floor(cameraX / squareSize) - 5;
-  const startY = Math.floor(cameraY / squareSize) - 5;
-  const endX = Math.ceil((cameraX + canvas.width) / squareSize) + 5;
-  const endY = Math.ceil((cameraY + canvas.height) / squareSize) + 5;
+  let animals = Object.values(units);
+  frame++;
+  let { pos, heading, animation } = agent;
 
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.strokeStyle = "#777";
-  // let ii = 0;
-  let unitY = agent.pos.y;
-
-  entities.forEach((entity) => {
-    const x = entity.x - cameraX;
-    const y = entity.y - cameraY;
-    if (y >= unitY) {
-      // console.log(j * squareSize, unitY);
-      drawUnit();
-      unitY = Infinity;
-    }
-    //check if sprite is on screen:
-    if (
-      x > canvas.width ||
-      y > canvas.height ||
-      x + entity.image.width < 0 ||
-      y + entity.image.height < 0
-    ) {
-      return;
+  animals.forEach((animal, i) => {
+    // console.log(animal);
+    let angle = heading;
+    let flip = angle > 4;
+    if (angle > 4) {
+      angle = 4 - (angle - 4);
     }
 
-    ctx.drawImage(
-      entity.image.img,
-      x,
-      y,
-      entity.image.width,
-      entity.image.height
-    );
-  });
+    let frames = [];
+    if (animation == "move") {
+      frames = animal["Walk"];
+    } else {
+      frames = animal["Stand"] || animal["Stand Ground"];
+    }
+    let nFrames = frames.length;
+    let framePerDir = nFrames / 5;
+    let offset = angle * framePerDir;
+    frames = frames.slice(offset, offset + framePerDir);
 
-  if (unitY < Infinity) {
-    drawUnit();
-  }
-
-  function drawUnit() {
-    let animals = Object.values(units);
-    frame++;
-    let { pos, heading, animation } = agent;
-
-    animals.forEach((animal, i) => {
-      // console.log(animal);
-      let angle = heading;
-      let flip = angle > 4;
-      if (angle > 4) {
-        angle = 4 - (angle - 4);
-      }
-
-      let frames = [];
-      if (animation == "move") {
-        frames = animal["Walk"];
+    // console.log(standFrames.length);
+    let img = frames[(frame >> 2) % frames.length];
+    // console.lo;
+    if (img) {
+      let x = pos.x - cameraX;
+      let y = pos.y - cameraY;
+      if (flip) {
+        ctx.translate(x, y);
+        ctx.scale(-1, 1);
+        ctx.drawImage(img, -img.width / 2, -img.height);
+        ctx.resetTransform();
       } else {
-        frames = animal["Stand"] || animal["Stand Ground"];
+        ctx.drawImage(img, x - img.width / 2, y - img.height);
       }
-      let nFrames = frames.length;
-      let framePerDir = nFrames / 5;
-      let offset = angle * framePerDir;
-      frames = frames.slice(offset, offset + framePerDir);
+      ctx.fillStyle = "blue";
+      ctx.fillRect(x, y, 2, 2);
+    }
+  });
+}
 
-      // console.log(standFrames.length);
-      let horseImg = frames[(frame >> 2) % frames.length];
-      // console.lo;
-      if (horseImg) {
-        let x = pos.x - cameraX;
-        let y = pos.y - cameraY;
-        if (flip) {
-          ctx.translate(x, y);
-          ctx.scale(-1, 1);
-          ctx.drawImage(horseImg, -horseImg.width / 2, -horseImg.height / 2);
-          ctx.resetTransform();
-        } else {
-          ctx.drawImage(
-            horseImg,
-            x - horseImg.width / 2,
-            y - horseImg.height / 2
-          );
-        }
-      }
-    });
-  }
-  // let horseImg = horseFrames[frame++ % horseFrames.length];
-  // // console.lo;
-  // if (horseImg) {
-  //   let x = mePos.x - cameraX;
-  //   let y = mePos.y - cameraY;
-  //   ctx.drawImage(horseImg, x - horseImg.width / 2, y - horseImg.height / 2);
-  // }
+function renderGrid() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  let state = getState();
+  let { agents, me } = state;
+
+  let drawable = [...entities, ...agents, me];
+  drawable.sort((a, b) => {
+    let aY = a.pos.y;
+    let bY = b.pos.y;
+
+    return aY - bY;
+  });
+  drawable.forEach((drawable) => {
+    if (drawable.image) {
+      DrawEntity(drawable);
+    } else {
+      drawUnit(drawable);
+    }
+  });
 }
 
 let size = 1000;
@@ -267,7 +272,7 @@ function tick() {
   if (i % 10 == 0) {
     sendUpdate();
   }
-  renderGrid(state.camera, state.me);
+  renderGrid();
   render(state.camera, cellSize, data);
   i++;
 
