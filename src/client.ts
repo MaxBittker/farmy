@@ -4,7 +4,7 @@ import YPartyKitProvider from "y-partykit/provider";
 
 // console.log(YPartyKitProvider)
 import { getState } from "./state";
-import { AgentLayout } from "./types";
+import { AgentLayout, EntityLayout } from "./types";
 
 import { distance } from "./utils";
 
@@ -25,7 +25,23 @@ function sendBitmapUpdate(i: number, val: number) {
   bitmap.set(i.toString(), val);
 }
 
-const yMapEnts = ydoc.getMap("entities");
+const yMapEnts: Y.Map<EntityLayout> = ydoc.getMap("entities");
+getState().entities = yMapEnts;
+// function sendEntityUpdate(uuid: string) {
+//   const { entities } = getState();
+
+//   let ent = entities.get(uuid);
+
+//   yMapEnts.set(uuid, ent);
+// }
+
+// function sendEntityDelete(uuid: string) {
+//   console.log("deleting: " + uuid);
+//   yMapEnts.delete(uuid);
+// }
+
+
+
 
 
 const yProvider = new YPartyKitProvider(
@@ -41,9 +57,11 @@ const myYId = awareness.clientID;
 awareness.on("change", (_changes: any) => {
   // todo be more selective
   const newStates = awareness.getStates();
+  let me = getState().me;
   let agents = Array.from(newStates.values())
     .map((e) => e.agent)
     .filter((e) => e);
+  // .filter((e) => e && e?.uuid !== me?.uuid);
 
   processAgents(agents);
 });
@@ -57,7 +75,7 @@ function processAgents(agents: AgentLayout[]) {
   });
 
   state.agents = agents.map((a) => {
-    let pos = agentsMap[a.uuid]?.pos || a.pos;
+    let pos = agentsMap[a?.uuid]?.pos || a?.pos;
     if (distance(a.target, a.pos) < 1) {
       pos = a.pos;
     }

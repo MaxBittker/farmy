@@ -1,4 +1,5 @@
 import * as Vector from "@graph-ts/vector2";
+import * as Y from "yjs";
 
 interface AgentLayout {
   uuid: string;
@@ -11,6 +12,15 @@ interface AgentLayout {
   word?: string;
 }
 
+interface EntityLayout {
+  uuid: string;
+  pos: Matter.Vector;
+  spriteId: string;
+  width: number;
+  height: number;
+}
+
+
 interface StateLayout {
   me: AgentLayout;
   camera: Matter.Vector;
@@ -18,6 +28,7 @@ interface StateLayout {
   center: Matter.Vector;
   // audios: Source[];
   agents: AgentLayout[];
+  entities: Y.Map<EntityLayout>;
 }
 
-export { StateLayout, AgentLayout };
+export type { StateLayout, AgentLayout, EntityLayout };

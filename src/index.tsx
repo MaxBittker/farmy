@@ -12,9 +12,10 @@ import { updateAgent } from "./movement";
 import { sendUpdate, sendBitmapUpdate } from "./client";
 import { getState } from "./state";
 import render from "./gl";
-import { AgentLayout } from "./types";
+import { AgentLayout, EntityLayout } from "./types";
+import { v4 as uuidv4 } from "uuid";
 
-const gallery = Object.values(
+const gallery: string[] = Object.values(
   import.meta.glob("@assets/AoC_sprites/Natural/*.{png,jpg,jpeg,PNG,JPEG}", {
     eager: true,
     as: "url",
@@ -25,6 +26,7 @@ let allFrames = Object.values(
   import.meta.glob(
     // "@assets/AoC_sprites/Animals/*/*/*.{png,jpg,jpeg,PNG,JPEG}",
     "@assets/AoC_sprites/Animals/Standard/*/*.{png,jpg,jpeg,PNG,JPEG}",
+    // "/Animals/Standard/*/*/.{png,jpg,jpeg,PNG,JPEG}",
     {
       eager: true,
       as: "url",
@@ -35,9 +37,10 @@ let units = {};
 allFrames.forEach((src) => {
   // console.log(src);
   let parts = src.split("/").slice(4);
-  let unit = parts[0];
+  let unit = "standard";
   let mode = parts[1];
   let url = parts[2];
+  // console.log(parts);
   if (parts[3]) {
     // console.log(parts[3]);
   }
@@ -61,21 +64,26 @@ allFrames.forEach((src) => {
 console.log(units);
 
 // console.log(horseFrames);
-let images = [];
+let images: Map<string, AssetInfo> = new Map();
 
-gallery.forEach((src) => {
+gallery.forEach((src: string) => {
   let img = new Image();
-  let newObj = { img, src };
-  images.push(newObj);
+  let newObj: AssetInfo = { img, src };
+  images.set(src, newObj);
   img.src = src;
   img.onload = function () {
     let { width, height } = this;
-    // if (width < 150) {
-    // if (src.toLowerCase().indexOf("tree") > -1) {
     newObj.width = width;
     newObj.height = height;
   };
 });
+
+interface AssetInfo {
+  img: HTMLImageElement;
+  src: string;
+  width?: number;
+  height?: number;
+}
 
 // console.log(gallery);
 startInput();
@@ -101,36 +109,35 @@ canvas.height = window.innerHeight;
 
 let frame = 0;
 
-let entities: EntLayout[] = [];
+// let imgValues = [...images.keys()];
+// getState().entities.clear();
+// for (var m = 0; m < 100; m++) {
+//   let spriteId = imgValues[Math.floor(Math.random() * imgValues.length)];
+//   let uuid = uuidv4().slice(0, 8);
+//   let state = getState();
+//   let newEnt: EntityLayout = {
+//     uuid,
 
-interface EntLayout {
-  pos: Matter.Vector;
-  image: {
-    img: HTMLImageElement;
-    width?: number;
-    height?: number;
-  };
-}
+//     pos: {
+//       x: (Math.random() - 0.5) * window.innerWidth,
+//       y: (Math.random() - 0.5) * window.innerHeight,
+//     },
+//     spriteId: spriteId,
+//     width: images.get(spriteId)?.width!,
+//     height: images.get(spriteId)?.height!,
+//   };
 
-for (var m = 0; m < 1000; m++) {
-  let randomNatural = images[Math.floor(Math.random() * images.length)];
-  let ent = {
-    pos: {
-      x: (Math.random() - 0.5) * window.innerWidth * 3,
-      y: (Math.random() - 0.5) * window.innerHeight * 3,
-    },
-    image: randomNatural,
-  };
-  entities.push(ent);
-}
-entities.sort((a, b) => a.y - b.y);
+//   state.entities.set(uuid, newEnt);
+// }
 
-function DrawEntity(entity) {
+function DrawEntity(entity: EntityLayout) {
   let camera = getState().camera;
   const cameraX = camera.x - canvas.width / 2;
   const cameraY = camera.y - canvas.height / 2;
-  let w = entity.image.width;
-  let h = entity.image.height;
+  let image = images.get(entity.spriteId)!;
+
+  let w = image.width!;
+  let h = image.height!;
 
   const x = entity.pos.x - cameraX;
   const y = entity.pos.y - cameraY;
@@ -139,13 +146,13 @@ function DrawEntity(entity) {
   if (
     x - w / 2 > canvas.width ||
     y - h > canvas.height ||
-    x + entity.image.width < 0 ||
-    y + entity.image.height < 0
+    x + w < 0 ||
+    y + h < 0
   ) {
     return;
   }
 
-  ctx.drawImage(entity.image.img, x - w / 2, y - h);
+  ctx.drawImage(image.img, x - w / 2, y - h);
 
   ctx.fillStyle = "red";
   ctx.fillRect(x, y, 2, 2);
@@ -201,9 +208,13 @@ function drawUnit(agent: AgentLayout) {
 function renderGrid() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   let state = getState();
-  let { agents, me } = state;
+  let { agents, entities, me } = state;
 
-  let drawable = [...entities, ...agents, me];
+  let eList = [...entities.values()];
+  eList.sort((a, b) => a.y - b.y);
+
+
+  let drawable = [...eList, ...agents.map((a) => (a.uuid == me.uuid ? me : a))];
   drawable.sort((a, b) => {
     let aY = a.pos.y;
     let bY = b.pos.y;
@@ -211,7 +222,7 @@ function renderGrid() {
     return aY - bY;
   });
   drawable.forEach((drawable) => {
-    if (drawable.image) {
+    if (drawable.spriteId) {
       DrawEntity(drawable);
     } else {
       drawUnit(drawable);
