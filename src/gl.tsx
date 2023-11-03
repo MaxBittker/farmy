@@ -45,7 +45,7 @@ gridPosI.x += int(dataSize/2.);
 gridPosI.y -= int(dataSize/2.);
 float grayValue = data(gridPosI).r;
 vec3 green = vec3(170./255.,209./255.,120./255.);
-FOut = vec4(vec3(green *  (1.0- grayValue)),0.5);
+FOut = vec4(vec3(green *  (0.2 + grayValue)),0.5);
 `;
 
 function render(camera: Vector2, tileSize: number, data: Float32Array) {

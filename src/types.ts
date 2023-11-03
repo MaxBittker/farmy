@@ -1,15 +1,16 @@
-import * as Vector from "@graph-ts/vector2";
-import * as Y from "yjs";
+// import * as Y from "yjs";
+import * as Matter from 'matter-js';
 
 interface AgentLayout {
   uuid: string;
   pos: Matter.Vector;
   target: Matter.Vector;
   heading: number;
-  animation: "move" | "stand" | "sit";
+  animation: "move" | "stand" | "sit" | "die" | "rot";
   timeIdle: number;
   color?: number;
   word?: string;
+  timeOfDeath?: number;
 }
 
 interface EntityLayout {
@@ -28,7 +29,17 @@ interface StateLayout {
   center: Matter.Vector;
   // audios: Source[];
   agents: AgentLayout[];
-  entities: Y.Map<EntityLayout>;
+  entities: EntityLayout[];
 }
 
-export type { StateLayout, AgentLayout, EntityLayout };
+interface MessageLayout {
+  type: "A" | "E";
+  data: { [key: string]: AgentLayout } | { [key: string]: EntityLayout };
+}
+
+interface ClientMessageLayout {
+  type: "A" | "E";
+  data: AgentLayout | EntityLayout;
+}
+
+export type { StateLayout, AgentLayout, EntityLayout, MessageLayout, ClientMessageLayout };

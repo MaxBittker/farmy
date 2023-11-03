@@ -8,12 +8,11 @@ console.log(import.meta.url)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename)
 
-console.log(__dirname)
 export default defineConfig({
     plugins: [react(), reactRefresh()],
     resolve: {
         alias: {
-            "@assets": path.resolve(__dirname, "assets"),
+            // "@assets": path.resolve(__dirname, "public"),
         },
     },
 
@@ -24,5 +23,6 @@ export default defineConfig({
     build: {
         // Configure build options here
         outDir: 'docs',
+        assetsInlineLimit: 10,
     },
 });

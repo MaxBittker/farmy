@@ -10,7 +10,7 @@ function randomVec(r = 1) {
     opp = Math.sin(ang) * hyp;
   return { x: adj, y: opp };
 }
-function distance(a: Matter.Vector, b: Matter.Vector) {
+function distance(a: Vector, b: Vector) {
   return Vector.length(Vector.subtract(a, b));
 }
 function clamp(num: number, min: number, max: number) {

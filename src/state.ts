@@ -4,7 +4,7 @@ import * as Y from "yjs";
 import { v4 as uuidv4 } from "uuid";
 import { StateLayout } from "./types";
 import { nrandom, randomVec } from "./utils";
-import { atom } from "jotai";
+// import { atom } from "jotai";
 
 
 let uuid = uuidv4().slice(0, 8);
@@ -24,6 +24,7 @@ let state: StateLayout = {
   center: { x: 0, y: 0 },
   // audios: [],
   agents: [],
+  entities: [],
 };
 
 
